@@ -66,6 +66,15 @@
         <!-- reCAPTCHA -->
         <div id="recaptchaContainer" class="g-recaptcha"></div>
         
+        <!-- Test User Info -->
+        <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+          <p class="text-sm text-blue-700">
+            <strong>Test Hesabı:</strong><br>
+            Kullanıcı Adı: <code class="bg-blue-100 px-1 rounded">testuser</code><br>
+            Şifre: <code class="bg-blue-100 px-1 rounded">testuser</code>
+          </p>
+        </div>
+        
         <div class="space-y-3">
           <button type="submit" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition">
             Giriş Yap
@@ -350,7 +359,8 @@
         name: credential.name,
         email: credential.email,
         picture: credential.picture,
-        loginMethod: 'google'
+        loginMethod: 'google',
+        userType: 'google'
       };
       
       isAuthenticated = true;
@@ -381,14 +391,35 @@
         return;
       }
 
-      // Demo authentication (in real app, this would be server-side)
-      if (email && password) {
+      // Check test user credentials
+      if (email === config.testUser.username && password === config.testUser.password) {
+        currentUser = {
+          id: 'testuser_' + Date.now(),
+          name: 'Test Kullanıcısı',
+          email: 'testuser@example.com',
+          picture: null,
+          loginMethod: 'testuser',
+          userType: 'test'
+        };
+        
+        isAuthenticated = true;
+        localStorage.setItem('currentUser', JSON.stringify(currentUser));
+        updateAuthUI();
+        closeLoginModal();
+        
+        showMessage('Test kullanıcısı olarak giriş yaptınız!', 'success');
+        return;
+      }
+
+      // Demo authentication for email format (in real app, this would be server-side)
+      if (email && password && email.includes('@')) {
         currentUser = {
           id: Date.now().toString(),
           name: email.split('@')[0],
           email: email,
           picture: null,
-          loginMethod: 'email'
+          loginMethod: 'email',
+          userType: 'regular'
         };
         
         isAuthenticated = true;
@@ -397,6 +428,8 @@
         closeLoginModal();
         
         showMessage('Başarıyla giriş yaptınız!', 'success');
+      } else {
+        showMessage('Geçersiz kullanıcı adı veya şifre!', 'error');
       }
     }
 
@@ -443,7 +476,11 @@
         // Header authentication
         loginBtn.classList.add('hidden');
         userInfo.classList.remove('hidden');
-        userName.textContent = currentUser.name;
+        if (currentUser.userType === 'test') {
+          userName.textContent = currentUser.name + ' (Test)';
+        } else {
+          userName.textContent = currentUser.name;
+        }
         
         // Strategy form
         loginRequiredMessage.classList.add('hidden');
@@ -451,7 +488,11 @@
         
         // Premium content
         premiumContent.classList.remove('hidden');
-        premiumUserName.textContent = currentUser.name;
+        if (currentUser.userType === 'test') {
+          premiumUserName.textContent = currentUser.name + ' (Test Kullanıcısı)';
+        } else {
+          premiumUserName.textContent = currentUser.name;
+        }
       } else {
         // Header authentication
         loginBtn.classList.remove('hidden');

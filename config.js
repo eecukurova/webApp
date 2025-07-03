@@ -23,6 +23,12 @@ const config = {
     admin: {
         username: "admin",
         password: "admin"
+    },
+    
+    // Test user configuration
+    testUser: {
+        username: "testuser",
+        password: "testuser"
     }
 };
 
