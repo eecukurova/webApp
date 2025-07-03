@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EralpAhmet Trading Company</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="config.js"></script>
 </head>
 <body class="text-gray-800 bg-gray-50 scroll-smooth">
 
@@ -63,25 +64,31 @@
   <section id="request" class="py-16 bg-gray-50 px-4">
     <div class="max-w-2xl mx-auto">
       <h2 class="text-3xl font-bold text-center mb-4">Strateji Talebi</h2>
-      <p class="text-center mb-8">Bir fikriniz var mı? TradingView kullanıcı adınızı ve ne geliştirmemizi istediğinizi gönderin.</p>
-      <form onsubmit="event.preventDefault(); alert('Teşekkürler! Yakında sizinle iletişime geçeceğiz.');" class="space-y-6 bg-white p-6 rounded-lg shadow">
+      <p class="text-center mb-8">Hangi stratejimizi satın almak istiyorsunuz? Aşağıdaki formu doldurarak talebinizi iletebilirsiniz. Uzman ekibimiz en kısa sürede sizinle iletişime geçecektir.</p>
+      <form id="strategyForm" onsubmit="handleFormSubmit(event)" class="space-y-6 bg-white p-6 rounded-lg shadow">
         <div>
           <label class="block mb-1 font-medium">İsim</label>
-          <input type="text" class="w-full border border-gray-300 rounded px-4 py-2" required />
+          <input type="text" id="name" class="w-full border border-gray-300 rounded px-4 py-2" required />
         </div>
         <div>
           <label class="block mb-1 font-medium">E-posta</label>
-          <input type="email" class="w-full border border-gray-300 rounded px-4 py-2" required />
+          <input type="email" id="email" class="w-full border border-gray-300 rounded px-4 py-2" required />
         </div>
         <div>
           <label class="block mb-1 font-medium">TradingView Kullanıcı Adı</label>
-          <input type="text" class="w-full border border-gray-300 rounded px-4 py-2" required />
+          <input type="text" id="tradingViewUsername" class="w-full border border-gray-300 rounded px-4 py-2" required />
         </div>
         <div>
-          <label class="block mb-1 font-medium">Strateji Fikriniz</label>
-          <textarea class="w-full border border-gray-300 rounded px-4 py-2" rows="4" required></textarea>
+          <label class="block mb-1 font-medium">İstediğiniz Strateji</label>
+          <select id="selectedStrategy" class="w-full border border-gray-300 rounded px-4 py-2" required>
+            <option value="">Bir strateji seçin</option>
+          </select>
         </div>
-        <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">Gönder</button>
+        <div>
+          <label class="block mb-1 font-medium">Not Yazınız</label>
+          <textarea id="notes" class="w-full border border-gray-300 rounded px-4 py-2" rows="4" placeholder="Ek bilgi veya özel talepleriniz varsa buraya yazabilirsiniz..."></textarea>
+        </div>
+        <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">Talep Gönder</button>
       </form>
     </div>
   </section>
@@ -98,6 +105,64 @@
       <p class="mt-8 text-sm text-gray-500">© 2025 EralpAhmet Trading Company. Tüm hakları saklıdır.</p>
     </div>
   </footer>
+
+  <script>
+    // Initialize dropdown when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      populateStrategyDropdown();
+    });
+
+    // Populate strategy dropdown from config
+    function populateStrategyDropdown() {
+      const select = document.getElementById('selectedStrategy');
+      config.strategies.forEach(strategy => {
+        const option = document.createElement('option');
+        option.value = strategy;
+        option.textContent = strategy;
+        select.appendChild(option);
+      });
+    }
+
+    // Handle form submission
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        tradingViewUsername: document.getElementById('tradingViewUsername').value,
+        selectedStrategy: document.getElementById('selectedStrategy').value,
+        notes: document.getElementById('notes').value
+      };
+
+      // Send email
+      sendEmail(formData);
+    }
+
+    // Send email function
+    function sendEmail(data) {
+      const subject = encodeURIComponent(config.email.subject);
+      const body = encodeURIComponent(
+        `Yeni Strateji Talebi Detayları:\n\n` +
+        `İsim: ${data.name}\n` +
+        `E-posta: ${data.email}\n` +
+        `TradingView Kullanıcı Adı: ${data.tradingViewUsername}\n` +
+        `İstenen Strateji: ${data.selectedStrategy}\n` +
+        `Notlar: ${data.notes}\n\n` +
+        `Talep Tarihi: ${new Date().toLocaleString('tr-TR')}`
+      );
+
+      // Open email client with pre-filled data
+      const mailtoLink = `mailto:${config.email.recipient}?subject=${subject}&body=${body}`;
+      window.location.href = mailtoLink;
+
+      // Show success message
+      alert('Talebiniz hazırlandı! E-posta istemciniz açılacak. Lütfen e-postayı gönderin.');
+      
+      // Reset form
+      document.getElementById('strategyForm').reset();
+    }
+  </script>
 
 </body>
 </html> 
