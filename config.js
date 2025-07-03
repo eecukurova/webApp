@@ -11,7 +11,13 @@ const config = {
         "PSAR Strategy",
         "ATR Strategy",
         "Özel Strateji Talebi"
-    ]
+    ],
+    
+    // Authentication configuration
+    auth: {
+        googleClientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
+        recaptchaSiteKey: "YOUR_RECAPTCHA_SITE_KEY"
+    }
 };
 
 // Export for use in other files
