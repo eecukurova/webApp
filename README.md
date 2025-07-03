@@ -86,6 +86,54 @@ email: {
 3. Domain'i Google Console'larda authorize edin
 4. HTTPS kullanmayı unutmayın (production için)
 
+## 🚀 Local Development
+
+### Server Management Scripts
+
+Website'i yerel olarak çalıştırmak için hazır scriptler:
+
+```bash
+# Server'ı başlat
+./start.sh
+
+# Server'ı durdur
+./stop.sh
+
+# Server durumunu kontrol et
+./status.sh
+
+# Server'ı yeniden başlat
+./restart.sh
+
+# Canlı logları izle
+tail -f logs/webapp.log
+```
+
+### Script Özellikleri
+
+- ✅ **PID Tracking**: Process ID takibi
+- ✅ **Log Management**: Otomatik log kayıtları
+- ✅ **Status Monitoring**: Detaylı durum kontrolü
+- ✅ **Graceful Shutdown**: Güvenli kapatma
+- ✅ **Auto Cleanup**: Otomatik temizlik
+
+### Server Bilgileri
+
+- **Port**: 8000
+- **URL**: http://localhost:8000
+- **Logs**: `logs/webapp.log`
+- **PID File**: `webapp.pid`
+
+### Kullanıcı Hesapları
+
+#### Test Kullanıcısı
+- **Kullanıcı Adı**: `testuser`
+- **Şifre**: `testuser`
+
+#### Admin
+- **Kullanıcı Adı**: `admin`
+- **Şifre**: `admin`
+
 ## 📞 Destek
 
 Teknik destek için: 8251108@gmail.com 
