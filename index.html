@@ -70,7 +70,7 @@
         <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
           <p class="text-sm text-blue-700">
             <strong>Test Hesabı:</strong><br>
-            Kullanıcı Adı: <code class="bg-blue-100 px-1 rounded">testuser</code><br>
+            E-posta: <code class="bg-blue-100 px-1 rounded">testuser</code> veya <code class="bg-blue-100 px-1 rounded">testuser@example.com</code><br>
             Şifre: <code class="bg-blue-100 px-1 rounded">testuser</code>
           </p>
         </div>
@@ -391,8 +391,8 @@
         return;
       }
 
-      // Check test user credentials
-      if (email === config.testUser.username && password === config.testUser.password) {
+      // Check test user credentials (support both testuser and testuser@example.com)
+      if ((email === config.testUser.username || email === 'testuser@example.com') && password === config.testUser.password) {
         currentUser = {
           id: 'testuser_' + Date.now(),
           name: 'Test Kullanıcısı',
