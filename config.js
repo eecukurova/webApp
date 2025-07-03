@@ -17,6 +17,12 @@ const config = {
     auth: {
         googleClientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
         recaptchaSiteKey: "YOUR_RECAPTCHA_SITE_KEY"
+    },
+    
+    // Admin configuration
+    admin: {
+        username: "admin",
+        password: "admin"
     }
 };
 

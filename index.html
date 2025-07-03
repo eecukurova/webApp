@@ -22,6 +22,7 @@
         <a href="#strategies" class="hover:text-indigo-500 font-medium">Stratejiler</a>
         <a href="#request" class="hover:text-indigo-500 font-medium">Strateji Talebi</a>
         <a href="#contact" class="hover:text-indigo-500 font-medium">İletişim</a>
+        <a href="#" onclick="openAdminModal()" class="hover:text-indigo-500 font-medium">Admin</a>
         
         <!-- Authentication buttons -->
         <div id="authButtons" class="ml-4">
@@ -78,6 +79,95 @@
           <div id="googleSignInButton" class="flex justify-center"></div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 👨‍💼 Admin Login Modal -->
+  <div id="adminModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Admin Girişi</h2>
+        <button onclick="closeAdminModal()" class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <form id="adminLoginForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Kullanıcı Adı</label>
+          <input type="text" id="adminUsername" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Şifre</label>
+          <input type="password" id="adminPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        </div>
+        
+        <button type="submit" class="w-full bg-red-600 text-white py-2 px-4 rounded-md hover:bg-red-700 transition">
+          Admin Girişi
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- 🎛️ Admin Panel -->
+  <div id="adminPanel" class="fixed inset-0 bg-white hidden z-50 overflow-y-auto">
+    <div class="bg-gray-900 text-white p-4">
+      <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Admin Panel - Ticket Sistemi</h1>
+        <button onclick="closeAdminPanel()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded">
+          Çıkış Yap
+        </button>
+      </div>
+    </div>
+    
+    <div class="p-6">
+      <!-- Ticket Statistics -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-blue-100 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold text-blue-800">Açık Talepler</h3>
+          <p class="text-3xl font-bold text-blue-600" id="openTickets">0</p>
+        </div>
+        <div class="bg-yellow-100 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold text-yellow-800">Devam Eden</h3>
+          <p class="text-3xl font-bold text-yellow-600" id="inProgressTickets">0</p>
+        </div>
+        <div class="bg-green-100 p-4 rounded-lg">
+          <h3 class="text-lg font-semibold text-green-800">Kapalı Talepler</h3>
+          <p class="text-3xl font-bold text-green-600" id="closedTickets">0</p>
+        </div>
+      </div>
+      
+      <!-- Ticket List -->
+      <div class="bg-white rounded-lg shadow">
+        <div class="p-4 border-b border-gray-200">
+          <h2 class="text-xl font-semibold">Strateji Talepleri</h2>
+        </div>
+        
+        <div id="ticketList" class="p-4">
+          <!-- Tickets will be populated here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🎫 Ticket Detail Modal -->
+  <div id="ticketDetailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+    <div class="bg-white rounded-lg p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">Ticket Detayı</h2>
+        <button onclick="closeTicketDetail()" class="text-gray-500 hover:text-gray-700">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="ticketDetailContent">
+        <!-- Ticket details will be populated here -->
+      </div>
     </div>
   </div>
 
@@ -440,9 +530,28 @@
 
     // Send email function
     function sendEmail(data) {
+      // Create ticket
+      const ticket = {
+        id: Date.now(),
+        name: data.name,
+        email: data.email,
+        tradingViewUsername: data.tradingViewUsername,
+        selectedStrategy: data.selectedStrategy,
+        notes: data.notes,
+        status: 'open',
+        createdAt: new Date().toISOString(),
+        responses: []
+      };
+
+      // Save ticket to localStorage
+      let tickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+      tickets.push(ticket);
+      localStorage.setItem('tickets', JSON.stringify(tickets));
+
       const subject = encodeURIComponent(config.email.subject);
       const body = encodeURIComponent(
         `Yeni Strateji Talebi Detayları:\n\n` +
+        `Ticket ID: ${ticket.id}\n` +
         `İsim: ${data.name}\n` +
         `E-posta: ${data.email}\n` +
         `TradingView Kullanıcı Adı: ${data.tradingViewUsername}\n` +
@@ -456,11 +565,247 @@
       window.location.href = mailtoLink;
 
       // Show success message
-      alert('Talebiniz hazırlandı! E-posta istemciniz açılacak. Lütfen e-postayı gönderin.');
+      showMessage(`Talebiniz alındı! Ticket ID: ${ticket.id}. E-posta istemciniz açılacak.`, 'success');
       
       // Reset form
       document.getElementById('strategyForm').reset();
     }
+
+    // ======= ADMIN PANEL FUNCTIONS =======
+    
+    // Admin state
+    let isAdminLoggedIn = false;
+    let currentTickets = [];
+
+    // Open admin modal
+    function openAdminModal() {
+      document.getElementById('adminModal').classList.remove('hidden');
+    }
+
+    // Close admin modal
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+      document.getElementById('adminLoginForm').reset();
+    }
+
+    // Admin login
+    function handleAdminLogin(username, password) {
+      if (username === config.admin.username && password === config.admin.password) {
+        isAdminLoggedIn = true;
+        closeAdminModal();
+        showAdminPanel();
+        showMessage('Admin girişi başarılı!', 'success');
+      } else {
+        showMessage('Kullanıcı adı veya şifre hatalı!', 'error');
+      }
+    }
+
+    // Show admin panel
+    function showAdminPanel() {
+      document.getElementById('adminPanel').classList.remove('hidden');
+      loadTickets();
+      updateTicketStatistics();
+    }
+
+    // Close admin panel
+    function closeAdminPanel() {
+      document.getElementById('adminPanel').classList.add('hidden');
+      isAdminLoggedIn = false;
+      showMessage('Admin çıkışı yapıldı.', 'success');
+    }
+
+    // Load tickets from localStorage
+    function loadTickets() {
+      currentTickets = JSON.parse(localStorage.getItem('tickets') || '[]');
+      displayTickets();
+    }
+
+    // Display tickets in admin panel
+    function displayTickets() {
+      const ticketList = document.getElementById('ticketList');
+      
+      if (currentTickets.length === 0) {
+        ticketList.innerHTML = '<p class="text-gray-500 text-center py-4">Henüz hiç strateji talebi yok.</p>';
+        return;
+      }
+
+      ticketList.innerHTML = currentTickets.map(ticket => {
+        const statusColors = {
+          'open': 'bg-blue-100 text-blue-800',
+          'inprogress': 'bg-yellow-100 text-yellow-800',
+          'closed': 'bg-green-100 text-green-800'
+        };
+
+        const statusTexts = {
+          'open': 'Açık',
+          'inprogress': 'Devam Ediyor',
+          'closed': 'Kapalı'
+        };
+
+        return `
+          <div class="border border-gray-200 rounded-lg p-4 mb-4 hover:shadow-md transition">
+            <div class="flex justify-between items-start">
+              <div class="flex-1">
+                <h3 class="font-semibold text-lg">Ticket #${ticket.id}</h3>
+                <p class="text-gray-600">👤 ${ticket.name} (${ticket.email})</p>
+                <p class="text-gray-600">📈 ${ticket.selectedStrategy}</p>
+                <p class="text-gray-500 text-sm">📅 ${new Date(ticket.createdAt).toLocaleString('tr-TR')}</p>
+              </div>
+              <div class="flex flex-col items-end space-y-2">
+                <span class="px-3 py-1 rounded-full text-xs font-medium ${statusColors[ticket.status]}">
+                  ${statusTexts[ticket.status]}
+                </span>
+                <button onclick="showTicketDetail(${ticket.id})" class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700">
+                  Detayları Görüntüle
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Show ticket detail
+    function showTicketDetail(ticketId) {
+      const ticket = currentTickets.find(t => t.id === ticketId);
+      if (!ticket) return;
+
+      const statusOptions = [
+        { value: 'open', text: 'Açık' },
+        { value: 'inprogress', text: 'Devam Ediyor' },
+        { value: 'closed', text: 'Kapalı' }
+      ];
+
+      const statusSelect = statusOptions.map(option => 
+        `<option value="${option.value}" ${ticket.status === option.value ? 'selected' : ''}>${option.text}</option>`
+      ).join('');
+
+      const responsesHtml = ticket.responses.map(response => `
+        <div class="bg-gray-50 p-3 rounded mb-2">
+          <p class="text-sm text-gray-600">📅 ${new Date(response.timestamp).toLocaleString('tr-TR')}</p>
+          <p class="mt-1">${response.message}</p>
+        </div>
+      `).join('');
+
+      document.getElementById('ticketDetailContent').innerHTML = `
+        <div class="space-y-4">
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <h3 class="font-semibold mb-2">Ticket Bilgileri</h3>
+            <p><strong>ID:</strong> ${ticket.id}</p>
+            <p><strong>İsim:</strong> ${ticket.name}</p>
+            <p><strong>E-posta:</strong> ${ticket.email}</p>
+            <p><strong>TradingView:</strong> ${ticket.tradingViewUsername}</p>
+            <p><strong>İstenen Strateji:</strong> ${ticket.selectedStrategy}</p>
+            <p><strong>Tarih:</strong> ${new Date(ticket.createdAt).toLocaleString('tr-TR')}</p>
+            <p><strong>Notlar:</strong> ${ticket.notes || 'Yok'}</p>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Ticket Durumu</label>
+            <select id="ticketStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+              ${statusSelect}
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Cevaplar</label>
+            <div class="max-h-60 overflow-y-auto">
+              ${responsesHtml || '<p class="text-gray-500">Henüz cevap yok.</p>'}
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Yeni Cevap</label>
+            <textarea id="newResponse" class="w-full px-3 py-2 border border-gray-300 rounded-md" rows="3" placeholder="Cevabınızı yazın..."></textarea>
+          </div>
+
+          <div class="flex space-x-3">
+            <button onclick="updateTicketStatus(${ticket.id})" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Durumu Güncelle
+            </button>
+            <button onclick="addResponse(${ticket.id})" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+              Cevap Ekle
+            </button>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('ticketDetailModal').classList.remove('hidden');
+    }
+
+    // Close ticket detail
+    function closeTicketDetail() {
+      document.getElementById('ticketDetailModal').classList.add('hidden');
+    }
+
+    // Update ticket status
+    function updateTicketStatus(ticketId) {
+      const newStatus = document.getElementById('ticketStatus').value;
+      
+      // Update in currentTickets array
+      const ticket = currentTickets.find(t => t.id === ticketId);
+      if (ticket) {
+        ticket.status = newStatus;
+        
+        // Update localStorage
+        localStorage.setItem('tickets', JSON.stringify(currentTickets));
+        
+        // Refresh displays
+        displayTickets();
+        updateTicketStatistics();
+        
+        showMessage('Ticket durumu güncellendi!', 'success');
+      }
+    }
+
+    // Add response to ticket
+    function addResponse(ticketId) {
+      const responseText = document.getElementById('newResponse').value.trim();
+      if (!responseText) {
+        showMessage('Cevap boş olamaz!', 'error');
+        return;
+      }
+
+      const ticket = currentTickets.find(t => t.id === ticketId);
+      if (ticket) {
+        ticket.responses.push({
+          message: responseText,
+          timestamp: new Date().toISOString()
+        });
+
+        // Update localStorage
+        localStorage.setItem('tickets', JSON.stringify(currentTickets));
+        
+        // Refresh ticket detail
+        showTicketDetail(ticketId);
+        
+        showMessage('Cevap eklendi!', 'success');
+      }
+    }
+
+    // Update ticket statistics
+    function updateTicketStatistics() {
+      const stats = {
+        open: currentTickets.filter(t => t.status === 'open').length,
+        inprogress: currentTickets.filter(t => t.status === 'inprogress').length,
+        closed: currentTickets.filter(t => t.status === 'closed').length
+      };
+
+      document.getElementById('openTickets').textContent = stats.open;
+      document.getElementById('inProgressTickets').textContent = stats.inprogress;
+      document.getElementById('closedTickets').textContent = stats.closed;
+    }
+
+    // Admin form submission
+    document.addEventListener('DOMContentLoaded', function() {
+      const adminLoginForm = document.getElementById('adminLoginForm');
+      adminLoginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const username = document.getElementById('adminUsername').value;
+        const password = document.getElementById('adminPassword').value;
+        handleAdminLogin(username, password);
+      });
+    });
   </script>
 
 </body>
