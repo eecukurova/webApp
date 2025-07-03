@@ -2,7 +2,7 @@
 const config = {
     // Email configuration
     email: {
-        recipient: "info@eralpahmettrading.com",
+        recipient: "8251108@gmail.com",
         subject: "Yeni Strateji Talebi"
     },
     
