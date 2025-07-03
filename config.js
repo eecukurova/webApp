@@ -16,7 +16,8 @@ const config = {
     // Authentication configuration
     auth: {
         googleClientId: "YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com",
-        recaptchaSiteKey: "YOUR_RECAPTCHA_SITE_KEY"
+        recaptchaSiteKey: "YOUR_RECAPTCHA_SITE_KEY",
+        enableRecaptcha: false // true = CAPTCHA açık, false = CAPTCHA kapalı
     },
     
     // Admin configuration

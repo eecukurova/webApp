@@ -64,7 +64,7 @@
         </div>
         
         <!-- reCAPTCHA -->
-        <div id="recaptchaContainer" class="g-recaptcha"></div>
+        <div id="recaptchaContainer" class="g-recaptcha hidden"></div>
         
         <!-- Test User Info -->
         <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
@@ -72,6 +72,13 @@
             <strong>Test Hesabı:</strong><br>
             E-posta: <code class="bg-blue-100 px-1 rounded">testuser</code> veya <code class="bg-blue-100 px-1 rounded">testuser@example.com</code><br>
             Şifre: <code class="bg-blue-100 px-1 rounded">testuser</code>
+          </p>
+        </div>
+        
+        <!-- reCAPTCHA Status Info -->
+        <div id="recaptchaStatusInfo" class="bg-yellow-50 border border-yellow-200 rounded-md p-3 hidden">
+          <p class="text-sm text-yellow-700">
+            <strong>Geliştirici Modu:</strong> reCAPTCHA şu anda kapalı (config.js'den açabilirsiniz)
           </p>
         </div>
         
@@ -329,11 +336,15 @@
         }
       );
 
-      // Initialize reCAPTCHA
-      if (typeof grecaptcha !== 'undefined') {
+      // Initialize reCAPTCHA only if enabled
+      if (config.auth.enableRecaptcha && typeof grecaptcha !== 'undefined') {
+        document.getElementById('recaptchaContainer').classList.remove('hidden');
         grecaptcha.render('recaptchaContainer', {
           'sitekey': config.auth.recaptchaSiteKey
         });
+      } else {
+        // Show info when reCAPTCHA is disabled
+        document.getElementById('recaptchaStatusInfo').classList.remove('hidden');
       }
 
       // Check if user is already logged in
@@ -384,11 +395,13 @@
 
     // Regular login with email/password
     function handleRegularLogin(email, password) {
-      // Verify reCAPTCHA
-      const recaptchaResponse = grecaptcha.getResponse();
-      if (!recaptchaResponse) {
-        showMessage('Lütfen reCAPTCHA\'yı tamamlayın.', 'error');
-        return;
+      // Verify reCAPTCHA only if enabled
+      if (config.auth.enableRecaptcha) {
+        const recaptchaResponse = grecaptcha.getResponse();
+        if (!recaptchaResponse) {
+          showMessage('Lütfen reCAPTCHA\'yı tamamlayın.', 'error');
+          return;
+        }
       }
 
       // Check test user credentials (support both testuser and testuser@example.com)
@@ -436,8 +449,8 @@
     // Login modal functions
     function openLoginModal() {
       document.getElementById('loginModal').classList.remove('hidden');
-      // Reset reCAPTCHA
-      if (typeof grecaptcha !== 'undefined') {
+      // Reset reCAPTCHA only if enabled
+      if (config.auth.enableRecaptcha && typeof grecaptcha !== 'undefined') {
         grecaptcha.reset();
       }
     }
