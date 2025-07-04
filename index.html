@@ -210,7 +210,12 @@
           <h3 class="text-2xl font-semibold mb-4">PSAR Strategy</h3>
           <img src="fotos/psar_strateji.png" alt="PSAR Strategy Chart" class="rounded mb-4 w-full">
           <p class="mb-4">PSAR ATR Stratejisi, Parabolic SAR ve Average True Range (ATR) göstergelerini birleştiren gelişmiş bir momentum tabanlı trading stratejisidir. Bu strateji, trend yönünü belirlemek için PSAR noktalarını kullanırken, ATR ile volatilite bazlı stop-loss ve take-profit seviyeleri belirler. Özellikle güçlü trendlerde yüksek kazanç potansiyeli sunar ve ani fiyat hareketlerine karşı koruma sağlar. Strateji, 15 dakikalık timeframe'de çalışarak hem kısa vadeli fırsatları yakalar hem de trend devam ederken pozisyonları korur.</p>
-          <button class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Satın Al</button>
+          <div class="flex justify-between items-center">
+            <span class="text-2xl font-bold text-green-600">$49.99</span>
+            <button onclick="purchaseStrategy('PSAR Strategy')" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition duration-200 flex items-center gap-2">
+              🛒 Satın Al
+            </button>
+          </div>
         </div>
 
         <!-- Strategy 2 -->
@@ -218,7 +223,12 @@
           <h3 class="text-2xl font-semibold mb-4">ATR Strategy</h3>
           <img src="fotos/atr_strateji.png" alt="ATR Strategy Chart" class="rounded mb-4 w-full">
           <p class="mb-4">ATR Stratejisi, Average True Range göstergesine dayalı volatilite odaklı bir trading yaklaşımıdır. Bu strateji, piyasa volatilitesini analiz ederek optimal giriş ve çıkış noktalarını belirler. ATR değerlerine göre dinamik stop-loss seviyeleri ayarlar ve risk yönetimini volatilite bazlı yapar. Strateji, düşük volatilite dönemlerinde daha konservatif, yüksek volatilite dönemlerinde ise daha agresif pozisyonlar alır. Bu yaklaşım, piyasa koşullarına adapte olarak tutarlı performans sağlar.</p>
-          <button class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Satın Al</button>
+          <div class="flex justify-between items-center">
+            <span class="text-2xl font-bold text-green-600">$79.99</span>
+            <button onclick="purchaseStrategy('ATR Strategy')" class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 transition duration-200 flex items-center gap-2">
+              🛒 Satın Al
+            </button>
+          </div>
         </div>
 
       </div>
@@ -564,6 +574,34 @@
         option.textContent = strategy;
         select.appendChild(option);
       });
+    }
+
+    // Whop Integration Functions
+    function purchaseStrategy(strategyName) {
+      if (!config.whop.enabled) {
+        showMessage('Satın alma özelliği şu anda devre dışı.', 'error');
+        return;
+      }
+
+      const product = config.whop.products[strategyName];
+      const url = product ? product.url : config.whop.fallbackUrl;
+      
+      // Show confirmation message
+      const price = product ? product.price : 'Fiyat bilgisi için';
+      const confirmMessage = `${strategyName} stratejisini ${price} karşılığında satın almak istiyorsunuz. Whop sayfasına yönlendirileceksiniz.`;
+      
+      if (confirm(confirmMessage)) {
+        // Open Whop link in new tab
+        window.open(url, '_blank');
+        
+        // Show success message
+        showMessage('Whop sayfasına yönlendirildiniz!', 'success');
+      }
+    }
+
+    function getStrategyPrice(strategyName) {
+      const product = config.whop.products[strategyName];
+      return product ? product.price : 'Fiyat Bilgisi İçin Teklif Alın';
     }
 
     // Handle form submission

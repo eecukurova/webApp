@@ -12,6 +12,26 @@ const config = {
         "ATR Strategy",
         "Özel Strateji Talebi"
     ],
+
+    // Whop integration - Product purchase links
+    // Replace with your actual Whop product URLs
+    whop: {
+        enabled: true,
+        products: {
+            "PSAR Strategy": {
+                url: "https://whop.com/your-psar-strategy/",  // Replace with actual PSAR product URL
+                price: "$49.99",
+                currency: "USD"
+            },
+            "ATR Strategy": {
+                url: "https://whop.com/your-atr-strategy/",   // Replace with actual ATR product URL
+                price: "$79.99", 
+                currency: "USD"
+            }
+        },
+        // Fallback URL if specific product not found - replace with your main store URL
+        fallbackUrl: "https://whop.com/your-store/"
+    },
     
     // Authentication configuration
     auth: {

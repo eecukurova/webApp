@@ -51,14 +51,70 @@ email: {
 }
 ```
 
+## 🛒 Whop Integration
+
+Website Whop ile entegre edilmiştir. Müşteriler strateji kartlarındaki "Satın Al" butonuna tıklayarak doğrudan Whop'a yönlendirilir.
+
+### Whop Ayarları
+
+`config.js` dosyasında Whop ayarlarını yapılandırabilirsiniz:
+
+```javascript
+whop: {
+    enabled: true,
+    products: {
+        "PSAR Strategy": {
+            url: "https://whop.com/your-psar-strategy/",  // Gerçek PSAR product URL'si
+            price: "$49.99",
+            currency: "USD"
+        },
+        "ATR Strategy": {
+            url: "https://whop.com/your-atr-strategy/",   // Gerçek ATR product URL'si
+            price: "$79.99", 
+            currency: "USD"
+        }
+    },
+    fallbackUrl: "https://whop.com/your-store/"  // Ana store URL'si
+}
+```
+
+### Kurulum
+
+1. Whop'da ürünlerinizi oluşturun
+2. Her ürün için URL'leri kopyalayın
+3. `config.js` dosyasındaki placeholder URL'leri gerçek URL'lerle değiştirin
+4. Fiyatları güncelleyin
+
+### Özellikler
+
+- ✅ Stratejilerde fiyat gösterimi
+- ✅ Tek tıkla Whop'a yönlendirme
+- ✅ Yeni sekmede açılır
+- ✅ Onay mesajı
+- ✅ Fallback URL desteği
+
 ## 🚀 Özellikler
 
 ### Authentication
 - ✅ Google OAuth ile giriş
 - ✅ Email/şifre ile giriş
-- ✅ reCAPTCHA güvenliği
+- ✅ reCAPTCHA güvenliği (açılıp kapatılabilir)
 - ✅ Oturum yönetimi (localStorage)
 - ✅ Otomatik giriş kalma
+
+### E-commerce Integration
+- ✅ Whop entegrasyonu
+- ✅ Strateji fiyatları görünür
+- ✅ Tek tıkla satın alma
+- ✅ Güvenli ödeme (Whop üzerinden)
+- ✅ Otomatik yönlendirme
+
+### Customer Management
+- ✅ Müşteri talep sistemi
+- ✅ Ticket tabanlı destek
+- ✅ "Taleplerim" sayfası
+- ✅ Mesajlaşma sistemi
+- ✅ Admin panel ile yönetim
 
 ### Protected Content
 - ✅ Sadece giriş yapanlar strateji talebi yapabilir
